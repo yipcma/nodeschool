@@ -1,5 +1,7 @@
-var result = 0
-for (var i = 2; i < process.argv.length; i++) {
-  result += +process.argv[i]
-}
-console.log(result)
+var fs = require('fs')
+
+var buf = fs.readFileSync(process.argv[2])
+
+var str = buf.toString().split('\n')
+
+console.log(str.length - 1)
