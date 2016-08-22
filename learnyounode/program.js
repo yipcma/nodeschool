@@ -1,15 +1,12 @@
-var mymodule = require('./mymodule');
+var http = require('http');
 
-mymodule(process.argv[2], process.argv[3], callback);
+var url = process.argv[2];
 
-// note best practice to handle err in callback
-function callback (err, data) {
-  if (err) {
-    return console.error(err);
-  } else {
-    // better with forEach
-    data.forEach(function (file) {
-      console.log(file);
-    })
-  }
-}
+http.get(url, function callback (response) {
+  // setEncoding to avoid toString()
+  response.setEncoding('utf8');
+  // listen to event; callback function simplified
+  response.on('data', console.log);
+  // error handling
+  response.on('error', console.error);
+}).on('error', console.error);
