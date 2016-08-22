@@ -1,26 +1,11 @@
-var http = require('http');
-var bl = require('bl');
-var async = require('async');
+var net = require('net');
+var strftime = require('strftime');
+var port = process.argv[2];
 
-var urls = process.argv.slice(2);
+var server = net.createServer(function (socket) {
+  // new Date() implied in second argument to strftime
+  var val = strftime('%F %H:%M') + '\n';
+  socket.end(val);
+})
 
-function getData (url, callback) {
-    http.get(url, function (response) {
-      response.pipe(bl(function (err, data) {
-        if (err)
-          return callback(err);
-        return callback(null, data.toString());
-      }))
-    }).on('error', console.error);
-}
-
-function printAll (err, results) {
-  if (err)
-    return console.error(err);
-  results.forEach(function (result) {
-    console.log(result);
-  })
-
-}
-
-async.map(urls, getData, printAll);
+server.listen(port);
