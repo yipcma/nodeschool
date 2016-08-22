@@ -1,31 +1,26 @@
 var http = require('http');
 var bl = require('bl');
-var results = [];
-var done = 0;
-var urls = process.argv.slice(2, process.argv.length);
+var async = require('async');
 
-function printAll () {
-  for (var i = 0; i < urls.length; i++) {
-    console.log(results[i]);
-  }
-}
+var urls = process.argv.slice(2);
 
-function getData (i) {
-    http.get(urls[i], function callback (response) {
+function getData (url, callback) {
+    http.get(url, function (response) {
       response.pipe(bl(function (err, data) {
         if (err)
-          return console.error(err);
-        data = data.toString();
-        results[i] = data;
-        // the counter lives inside the callback
-        done++;
-        if (done === urls.length) {
-          printAll();
-        }
+          return callback(err);
+        return callback(null, data.toString());
       }))
     }).on('error', console.error);
 }
 
-for (var i = 0; i < urls.length; i++) {
-  getData(i);
+function printAll (err, results) {
+  if (err)
+    return console.error(err);
+  results.forEach(function (result) {
+    console.log(result);
+  })
+
 }
+
+async.map(urls, getData, printAll);
