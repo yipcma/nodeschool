@@ -1,22 +1,15 @@
-var fs = require('fs');
-var path = require('path');
+var mymodule = require('./mymodule');
 
-var filePath = process.argv[2];
-var fileExt = process.argv[3];
+mymodule(process.argv[2], process.argv[3], callback);
 
-fs.readdir(filePath, function onReaddir (err, list) {
+// note best practice to handle err in callback
+function callback (err, data) {
   if (err) {
-    // error handling
     return console.error(err);
   } else {
-    // another way is to print with an if-check
-    var filteredList = list.filter(extFilter);
-    for (var i = 0; i < filteredList.length; i++) {
-      console.log(filteredList[i]);
-    }
+    // better with forEach
+    data.forEach(function (file) {
+      console.log(file);
+    })
   }
-})
-
-function extFilter (file) {
-  return path.extname(file) === '.' + fileExt;
 }
