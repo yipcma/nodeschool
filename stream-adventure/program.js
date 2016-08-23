@@ -1,20 +1,10 @@
-var through = require('through2');
-var split = require('split');
+var concat = require('concat-stream');
 
-var stream = through(write, end);
-var lineCount = 0;
+var stream = concat(function(buffer) {
+  console.log(buffer.toString().split('').reverse().join(''));
+})
 
-function write(buffer, encoding, next) {
-  this.push(lineCount % 2 === 0
-    ? buffer.toString().toLowerCase() + '\n'
-    : buffer.toString().toUpperCase() + '\n'
-  );
-  lineCount++;
-  next();
-}
+//cannot further pipe into stdout because concat makes a non-readable stream; thus use console.log in callback instead
 
-function end(done) {
-  done();
-}
-
-process.stdin.pipe(split()).pipe(stream).pipe(process.stdout);
+// another way is https://github.com/nodeschool/discussions/issues/90#issuecomment-237982881
+process.stdin.pipe(stream);
