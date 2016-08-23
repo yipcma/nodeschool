@@ -1,0 +1,13 @@
+{
+  "name": "@yipcma/how-to-npm",
+  "version": "1.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "node test.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {},
+  "repository": "http://test.com"
+}
