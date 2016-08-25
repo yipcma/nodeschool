@@ -1,10 +1,21 @@
-var concat = require('concat-stream');
+var http = require('http');
+var through = require('through2');
 
-var stream = concat(function(buffer) {
-  console.log(buffer.toString().split('').reverse().join(''));
+var stream = through(write, end);
+
+function write(buf, _, next) {
+  this.push(buf.toString().toUpperCase());
+  next();
+}
+
+function end(done) {
+  done();
+}
+
+var server = http.createServer(function(req, res) {
+  if (req.method !== 'POST')
+    return res.end('not POST\n');
+  req.pipe(stream).pipe(res);
 })
 
-//cannot further pipe into stdout because concat makes a non-readable stream; thus use console.log in callback instead
-
-// another way is https://github.com/nodeschool/discussions/issues/90#issuecomment-237982881
-process.stdin.pipe(stream);
+server.listen(process.argv[2]);
