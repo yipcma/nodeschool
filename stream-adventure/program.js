@@ -1,20 +1,9 @@
-var trumpet = require('trumpet');
-var through = require('through2');
+var spawn = require('child_process').spawn;
+var duplexer = require('duplexer2');
 
-var tr = trumpet();
-var stream = through(write, done);
-
-var loud = tr.select('.loud').createStream();
-
-loud.pipe(stream).pipe(loud);
-
-function write(buf, _, next) {
-  this.push(buf.toString().toUpperCase());
-  next();
+module.exports = function(cmd, args) {
+  var ps = spawn(cmd, args);
+  // why child.stdin is writable etc
+  // https://github.com/nodeschool/discussions/issues/915
+  return duplexer(ps.stdin, ps.stdout);
 }
-
-function done(done) {
-  done();
-}
-
-process.stdin.pipe(tr).pipe(process.stdout);
