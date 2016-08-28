@@ -1,11 +1,6 @@
-# Lists
+# Links
 
-- One
-  - 1.1
-  - 1.2
-- Two
-  - 2.1
-  - 2.2
-- Three
-- Four
-- Five
+[how-to-markdown] is a workshopper that teaches you how to write Markdown.
+
+<!-- My References -->
+[how-to-markdown]: git.io/how-to-markdown
