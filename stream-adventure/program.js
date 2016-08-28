@@ -1,9 +1,22 @@
-var spawn = require('child_process').spawn;
 var duplexer = require('duplexer2');
+var through = require('through2').obj;
 
-module.exports = function(cmd, args) {
-  var ps = spawn(cmd, args);
-  // why child.stdin is writable etc
-  // https://github.com/nodeschool/discussions/issues/915
-  return duplexer(ps.stdin, ps.stdout);
-}
+module.exports = function(counter) {
+  var counts = {};
+
+  // use through for procecssing the strem (read docs)
+  var input = through(write, end);
+
+  function write (row, _, next) {
+    counts[row.country] = (counts[row.country] || 0) + 1;
+    next();
+  }
+
+  function end (done) {
+    counter.setCounts(counts);
+    done();
+  }
+
+  // use objectMode on duplexer
+  return duplexer({objectMode: true}, input, counter);
+};
